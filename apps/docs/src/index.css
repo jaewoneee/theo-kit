@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@source "../../../packages/ui/src/**/*.tsx";
+
+@theme {
+  --color-gray-200: #e5e7eb;
+  --color-gray-500: #6b7280;
+  --color-gray-950: #030712;
+  --color-red-500: #ef4444;
+}

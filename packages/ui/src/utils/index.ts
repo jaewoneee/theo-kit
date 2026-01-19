@@ -1,3 +1,1 @@
-// Export utilities here
-// e.g., export * from './cn'
-export {}
+export { cn } from "./cn";

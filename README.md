@@ -33,6 +33,7 @@ theo-kit/
 - **빌드**: tsup (라이브러리), Vite (앱)
 - **테스트**: Vitest + Testing Library
 - **문서화**: Storybook
+- **스타일링**: Tailwind CSS v4
 - **코드 품질**: ESLint + Prettier
 - **언어**: TypeScript, React 18
 
@@ -78,6 +79,33 @@ pnpm format
 # Prettier 체크만 (CI용)
 pnpm format:check
 ```
+
+## 컴포넌트
+
+### Input
+
+기본 입력 컴포넌트로 에러 상태 지원
+
+```tsx
+import { Input } from "theo-kit";
+
+// 기본 사용
+<Input placeholder="Enter text..." />
+
+// 에러 상태
+<Input error errorMessage="Please enter a valid email" />
+
+// 비활성화
+<Input disabled placeholder="Disabled" />
+```
+
+**Props**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `error` | `boolean` | `false` | 에러 상태 (빨간 테두리) |
+| `errorMessage` | `string` | - | 에러 메시지 표시 |
+| `...props` | `InputHTMLAttributes` | - | 기본 input 속성 |
 
 ## 라이브러리 출력
 
