@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "../../utils";
 import { X } from "lucide-react";
+import { Badge } from "../Badge";
 
 export interface TagInputProps {
   value?: string[];
@@ -86,27 +87,26 @@ const TagInput = ({
         )}
       >
         {tags.map((tag, index) => (
-          <span
+          <Badge
             key={`${tag}-${index}`}
-            className={cn(
-              "flex items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-sm",
-              disabled && "opacity-50"
-            )}
+            className={cn(disabled && "opacity-50")}
+            rightSlot={
+              !disabled && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeTag(index);
+                  }}
+                  className="rounded-sm hover:bg-gray-200 p-0.5"
+                >
+                  <X size={14} className="text-gray-500" />
+                </button>
+              )
+            }
           >
             {tag}
-            {!disabled && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeTag(index);
-                }}
-                className="rounded-sm hover:bg-gray-200 p-0.5 -mr-0.5"
-              >
-                <X size={16} className="text-gray-500" />
-              </button>
-            )}
-          </span>
+          </Badge>
         ))}
         <input
           ref={inputRef}
