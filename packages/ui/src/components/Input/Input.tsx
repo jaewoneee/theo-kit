@@ -6,10 +6,39 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   errorMessage?: string;
   /** InputGroup 내부에서 사용될 때 true */
   grouped?: boolean;
+  /** IME 조합 중 여부를 외부에서 제어할 때 사용 */
+  onComposingChange?: (isComposing: boolean) => void;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type = "text", error, errorMessage, grouped, ...props }, ref) => {
+  (
+    {
+      className,
+      type = "text",
+      error,
+      errorMessage,
+      grouped,
+      onComposingChange,
+      onCompositionStart,
+      onCompositionEnd,
+      ...props
+    },
+    ref
+  ) => {
+    const handleCompositionStart = (
+      e: React.CompositionEvent<HTMLInputElement>
+    ) => {
+      onComposingChange?.(true);
+      onCompositionStart?.(e);
+    };
+
+    const handleCompositionEnd = (
+      e: React.CompositionEvent<HTMLInputElement>
+    ) => {
+      onComposingChange?.(false);
+      onCompositionEnd?.(e);
+    };
+
     const input = (
       <input
         type={type}
@@ -29,6 +58,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         aria-invalid={error}
         aria-describedby={error && errorMessage ? "input-error" : undefined}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
         {...props}
       />
     );
