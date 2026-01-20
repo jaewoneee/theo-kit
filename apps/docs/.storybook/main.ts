@@ -23,6 +23,13 @@ const config: StorybookConfig = {
           'theo-kit': resolve(__dirname, '../../../packages/ui/src'),
         },
       },
+      server: {
+        watch: {
+          // 새 파일 추가 감지를 위해 polling 사용
+          usePolling: true,
+          interval: 1000,
+        },
+      },
     })
   },
 }

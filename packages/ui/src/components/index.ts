@@ -4,6 +4,28 @@ export type { ButtonProps } from "./Button";
 export { Checkbox } from "./Checkbox";
 export type { CheckboxProps } from "./Checkbox";
 
+export {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+  useDialogContext,
+} from "./Dialog";
+export type {
+  DialogProps,
+  DialogTriggerProps,
+  DialogContentProps,
+  DialogHeaderProps,
+  DialogTitleProps,
+  DialogDescriptionProps,
+  DialogFooterProps,
+  DialogCloseProps,
+} from "./Dialog";
+
 export { Input } from "./Input";
 export type { InputProps } from "./Input";
 
