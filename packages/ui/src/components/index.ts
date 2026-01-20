@@ -11,3 +11,6 @@ export {
   useInputGroupContext,
 } from "./InputGroup";
 export type { InputGroupProps, InputAddonProps } from "./InputGroup";
+
+export { Select, SelectOption } from "./Select";
+export type { SelectProps, SelectOptionProps } from "./Select";
