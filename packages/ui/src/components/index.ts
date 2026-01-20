@@ -33,6 +33,22 @@ export { Input } from "./Input";
 export type { InputProps } from "./Input";
 
 export {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverClose,
+  usePopoverContext,
+} from "./Popover";
+export type {
+  PopoverProps,
+  PopoverTriggerProps,
+  PopoverContentProps,
+  PopoverCloseProps,
+  PopoverSide,
+  PopoverAlign,
+} from "./Popover";
+
+export {
   InputGroup,
   InputLeftAddon,
   InputRightAddon,
