@@ -1,6 +1,6 @@
 # theo-kit
 
-React 헤드리스 UI 컴포넌트 라이브러리
+AI-assisted development로 빠르게 구축한 React 헤드리스 UI 컴포넌트 라이브러리
 
 ## 프로젝트 구조
 
@@ -20,11 +20,11 @@ theo-kit/
 
 ### 패키지 설명
 
-| 패키지 | 경로 | 설명 |
-|--------|------|------|
-| `theo-kit` | `packages/ui` | 헤드리스 UI 컴포넌트 라이브러리 (배포용) |
-| `docs` | `apps/docs` | Storybook 기반 컴포넌트 문서화 |
-| `playground` | `apps/playground` | 컴포넌트 테스트용 샌드박스 앱 |
+| 패키지       | 경로              | 설명                                     |
+| ------------ | ----------------- | ---------------------------------------- |
+| `theo-kit`   | `packages/ui`     | 헤드리스 UI 컴포넌트 라이브러리 (배포용) |
+| `docs`       | `apps/docs`       | Storybook 기반 컴포넌트 문서화           |
+| `playground` | `apps/playground` | 컴포넌트 테스트용 샌드박스 앱            |
 
 ## 기술 스택
 
@@ -79,33 +79,6 @@ pnpm format
 # Prettier 체크만 (CI용)
 pnpm format:check
 ```
-
-## 컴포넌트
-
-### Input
-
-기본 입력 컴포넌트로 에러 상태 지원
-
-```tsx
-import { Input } from "theo-kit";
-
-// 기본 사용
-<Input placeholder="Enter text..." />
-
-// 에러 상태
-<Input error errorMessage="Please enter a valid email" />
-
-// 비활성화
-<Input disabled placeholder="Disabled" />
-```
-
-**Props**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `error` | `boolean` | `false` | 에러 상태 (빨간 테두리) |
-| `errorMessage` | `string` | - | 에러 메시지 표시 |
-| `...props` | `InputHTMLAttributes` | - | 기본 input 속성 |
 
 ## 라이브러리 출력
 
