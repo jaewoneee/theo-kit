@@ -8,3 +8,33 @@
   --color-gray-950: #030712;
   --color-red-500: #ef4444;
 }
+
+@layer base {
+  html,
+  html,
+  body,
+  #root {
+    @apply bg-white text-gray-950 size-full;
+  }
+
+  a {
+    @apply text-blue-600 hover:underline;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold text-gray-950;
+  }
+
+  p {
+    @apply mb-4;
+  }
+
+  code {
+    @apply bg-gray-100 text-red-500 px-1 rounded;
+  }
+}
