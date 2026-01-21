@@ -100,6 +100,27 @@ export type { SelectProps, SelectOptionProps } from "./Select";
 export { Switch } from "./Switch";
 export type { SwitchProps } from "./Switch";
 
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableCaption,
+} from "./Table";
+export type {
+  TableProps,
+  TableHeaderProps,
+  TableBodyProps,
+  TableFooterProps,
+  TableRowProps,
+  TableHeadProps,
+  TableCellProps,
+  TableCaptionProps,
+} from "./Table";
+
 export { TagInput } from "./TagInput";
 export type { TagInputProps } from "./TagInput";
 
