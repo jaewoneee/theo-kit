@@ -82,3 +82,6 @@ export type { SelectProps, SelectOptionProps } from "./Select";
 
 export { TagInput } from "./TagInput";
 export type { TagInputProps } from "./TagInput";
+
+export { Tooltip } from "./Tooltip";
+export type { TooltipProps, TooltipSide, TooltipAlign } from "./Tooltip";
