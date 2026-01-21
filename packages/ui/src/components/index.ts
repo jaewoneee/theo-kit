@@ -70,6 +70,9 @@ export type {
 export { Input } from "./Input";
 export type { InputProps } from "./Input";
 
+export { QuantityInput } from "./QuantityInput";
+export type { QuantityInputProps } from "./QuantityInput";
+
 export {
   Popover,
   PopoverTrigger,
