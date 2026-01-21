@@ -80,6 +80,9 @@ export type { RadioProps, RadioGroupProps } from "./Radio";
 export { Select, SelectOption } from "./Select";
 export type { SelectProps, SelectOptionProps } from "./Select";
 
+export { Switch } from "./Switch";
+export type { SwitchProps } from "./Switch";
+
 export { TagInput } from "./TagInput";
 export type { TagInputProps } from "./TagInput";
 
