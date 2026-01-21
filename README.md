@@ -1,6 +1,10 @@
-# theo-kit
+<div align="center">
+  <img src="./assets/theo-kit.png" alt="theo-kit" width="150"/>
+  <h1>Theo-kit</h1>
+  <p>AI-assisted development로 빠르게 구축한 React 헤드리스 UI 컴포넌트 라이브러리</p>
+</div>
 
-AI-assisted development로 빠르게 구축한 React 헤드리스 UI 컴포넌트 라이브러리
+---
 
 ## 프로젝트 구조
 
