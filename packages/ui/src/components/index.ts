@@ -83,5 +83,8 @@ export type { SelectProps, SelectOptionProps } from "./Select";
 export { TagInput } from "./TagInput";
 export type { TagInputProps } from "./TagInput";
 
+export { Toaster, toast } from "./Toast";
+export type { ToasterProps, ToasterPosition } from "./Toast";
+
 export { Tooltip } from "./Tooltip";
 export type { TooltipProps, TooltipSide, TooltipAlign } from "./Tooltip";

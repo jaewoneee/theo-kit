@@ -59,6 +59,7 @@
     "url": ""
   },
   "dependencies": {
-    "lucide-react": "^0.562.0"
+    "lucide-react": "^0.562.0",
+    "sonner": "^2.0.7"
   }
 }
