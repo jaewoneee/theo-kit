@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../../utils";
+import { usePopover } from "theo-kit-core";
 
 export interface PopoverProps {
   open?: boolean;
@@ -28,18 +29,12 @@ const Popover = ({
   onOpenChange,
   children,
 }: PopoverProps) => {
-  const [internalOpen, setInternalOpen] = React.useState(false);
+  const popover = usePopover({ open: controlledOpen, onOpenChange });
   const triggerRef = React.useRef<HTMLElement | null>(null);
-  const open = controlledOpen ?? internalOpen;
-
-  const handleOpenChange = (newOpen: boolean) => {
-    setInternalOpen(newOpen);
-    onOpenChange?.(newOpen);
-  };
 
   return (
     <PopoverContext.Provider
-      value={{ open, onOpenChange: handleOpenChange, triggerRef }}
+      value={{ open: popover.open, onOpenChange: popover.setOpen, triggerRef }}
     >
       <div className="relative inline-block">{children}</div>
     </PopoverContext.Provider>
@@ -139,12 +134,12 @@ const PopoverContent = ({
     }
   }, [open, isVisible]);
 
+  // Web-specific: click outside + escape key
   React.useEffect(() => {
     if (!open) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-      // 트리거 클릭은 무시 (트리거에서 토글 처리함)
       if (triggerRef.current?.contains(target)) {
         return;
       }

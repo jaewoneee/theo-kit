@@ -1,60 +1,20 @@
 import * as React from "react";
 import { cn } from "../../utils";
+import { useCarousel } from "theo-kit-core";
+import type { UseCarouselReturn } from "theo-kit-core";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * 자동 재생 여부
-   * @default false
-   */
   autoPlay?: boolean;
-  /**
-   * 자동 재생 간격 (ms)
-   * @default 3000
-   */
   interval?: number;
-  /**
-   * 무한 루프 여부
-   * @default true
-   */
   loop?: boolean;
-  /**
-   * 네비게이션 화살표 표시 여부
-   * @default true
-   */
   showArrows?: boolean;
-  /**
-   * 인디케이터(dots) 표시 여부
-   * @default true
-   */
   showIndicators?: boolean;
-  /**
-   * 드래그로 슬라이드 넘기기 활성화 여부
-   * @default true
-   */
   draggable?: boolean;
-  /**
-   * 슬라이드 간 간격 (px)
-   * @default 16
-   */
   gap?: number;
 }
 
-interface CarouselContextValue {
-  currentIndex: number;
-  totalSlides: number;
-  goTo: (index: number) => void;
-  goNext: () => void;
-  goPrev: () => void;
-  isDragging: boolean;
-  dragOffset: number;
-  handleDragStart: (clientX: number) => void;
-  handleDragMove: (clientX: number) => void;
-  handleDragEnd: () => void;
-  gap: number;
-}
-
-const CarouselContext = React.createContext<CarouselContextValue | null>(null);
+const CarouselContext = React.createContext<UseCarouselReturn | null>(null);
 
 export const useCarouselContext = () => {
   const context = React.useContext(CarouselContext);
@@ -80,145 +40,43 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
     },
     ref
   ) => {
-    const [currentIndex, setCurrentIndex] = React.useState(0);
-    const [totalSlides, setTotalSlides] = React.useState(0);
-    const [isDragging, setIsDragging] = React.useState(false);
-    const [dragOffset, setDragOffset] = React.useState(0);
-    const dragStartX = React.useRef(0);
-    const containerWidthRef = React.useRef(0);
+    const carousel = useCarousel({ autoPlay, interval, loop, draggable, gap });
     const containerRef = React.useRef<HTMLDivElement | null>(null);
-    const autoPlayRef = React.useRef<ReturnType<typeof setInterval> | null>(
-      null
-    );
-
-    const goTo = React.useCallback(
-      (index: number) => {
-        if (loop) {
-          setCurrentIndex(((index % totalSlides) + totalSlides) % totalSlides);
-        } else {
-          setCurrentIndex(Math.max(0, Math.min(index, totalSlides - 1)));
-        }
-      },
-      [loop, totalSlides]
-    );
-
-    const goNext = React.useCallback(() => {
-      if (!loop && currentIndex >= totalSlides - 1) return;
-      goTo(currentIndex + 1);
-    }, [currentIndex, goTo, loop, totalSlides]);
-
-    const goPrev = React.useCallback(() => {
-      if (!loop && currentIndex <= 0) return;
-      goTo(currentIndex - 1);
-    }, [currentIndex, goTo, loop]);
-
-    const handleDragStart = React.useCallback(
-      (clientX: number) => {
-        if (!draggable) return;
-        setIsDragging(true);
-        dragStartX.current = clientX;
-        if (containerRef.current) {
-          containerWidthRef.current = containerRef.current.offsetWidth;
-        }
-      },
-      [draggable]
-    );
-
-    const handleDragMove = React.useCallback(
-      (clientX: number) => {
-        if (!isDragging || !draggable) return;
-        const diff = clientX - dragStartX.current;
-        setDragOffset(diff);
-      },
-      [isDragging, draggable]
-    );
-
-    const handleDragEnd = React.useCallback(() => {
-      if (!isDragging || !draggable) return;
-      setIsDragging(false);
-
-      const threshold = containerWidthRef.current * 0.2;
-
-      if (dragOffset > threshold) {
-        goPrev();
-      } else if (dragOffset < -threshold) {
-        goNext();
-      }
-
-      setDragOffset(0);
-    }, [isDragging, draggable, dragOffset, goNext, goPrev]);
-
-    React.useEffect(() => {
-      if (autoPlay && totalSlides > 1 && !isDragging) {
-        autoPlayRef.current = setInterval(goNext, interval);
-        return () => {
-          if (autoPlayRef.current) {
-            clearInterval(autoPlayRef.current);
-          }
-        };
-      }
-    }, [autoPlay, interval, goNext, totalSlides, isDragging]);
-
-    const contextValue = React.useMemo(
-      () => ({
-        currentIndex,
-        totalSlides,
-        goTo,
-        goNext,
-        goPrev,
-        isDragging,
-        dragOffset,
-        handleDragStart,
-        handleDragMove,
-        handleDragEnd,
-        gap,
-      }),
-      [
-        currentIndex,
-        totalSlides,
-        goTo,
-        goNext,
-        goPrev,
-        isDragging,
-        dragOffset,
-        handleDragStart,
-        handleDragMove,
-        handleDragEnd,
-        gap,
-      ]
-    );
 
     const setRefs = React.useCallback(
       (node: HTMLDivElement | null) => {
         containerRef.current = node;
+        if (node) {
+          carousel.setContainerWidth(node.offsetWidth);
+        }
         if (typeof ref === "function") {
           ref(node);
         } else if (ref) {
           (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
         }
       },
-      [ref]
+      [ref, carousel]
     );
 
     return (
-      <CarouselContext.Provider value={contextValue}>
+      <CarouselContext.Provider value={carousel}>
         <div
           ref={setRefs}
           className={cn("relative w-full overflow-hidden", className)}
           {...props}
         >
-          <CarouselContent onSlidesChange={setTotalSlides}>
+          <CarouselContent onSlidesChange={carousel.setTotalSlides}>
             {children}
           </CarouselContent>
 
-          {showArrows && totalSlides > 1 && (
+          {showArrows && carousel.totalSlides > 1 && (
             <>
               <CarouselPrevButton />
               <CarouselNextButton />
             </>
           )}
 
-          {showIndicators && totalSlides > 1 && <CarouselIndicators />}
+          {showIndicators && carousel.totalSlides > 1 && <CarouselIndicators />}
         </div>
       </CarouselContext.Provider>
     );

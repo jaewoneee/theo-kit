@@ -1,5 +1,5 @@
-import * as React from "react";
 import { cn } from "../../utils";
+import { useToggle } from "theo-kit-core";
 import { Check } from "lucide-react";
 
 export interface CheckboxProps {
@@ -25,15 +25,12 @@ const Checkbox = ({
   defaultChecked,
   onChange,
 }: CheckboxProps) => {
-  const [internalChecked, setInternalChecked] = React.useState(defaultChecked ?? false);
-  const isChecked = checked ?? internalChecked;
-
-  const handleChange = () => {
-    if (disabled) return;
-    const newChecked = !isChecked;
-    setInternalChecked(newChecked);
-    onChange?.(newChecked);
-  };
+  const { checked: isChecked, toggle } = useToggle({
+    checked,
+    defaultChecked,
+    onChange,
+    disabled,
+  });
 
   return (
     <div className="flex flex-col">
@@ -47,11 +44,11 @@ const Checkbox = ({
           tabIndex={disabled ? -1 : 0}
           role="checkbox"
           aria-checked={isChecked}
-          onClick={handleChange}
+          onClick={toggle}
           onKeyDown={(e) => {
             if (e.key === " " || e.key === "Enter") {
               e.preventDefault();
-              handleChange();
+              toggle();
             }
           }}
           className={cn(
@@ -75,7 +72,7 @@ const Checkbox = ({
         </span>
         {label && (
           <span
-            onClick={handleChange}
+            onClick={toggle}
             className={cn("select-none text-sm", labelClassName)}
           >
             {label}

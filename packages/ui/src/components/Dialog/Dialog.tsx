@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../../utils";
+import { useDialog } from "theo-kit-core";
 import { X } from "lucide-react";
 
 export interface DialogProps {
@@ -32,16 +33,12 @@ const Dialog = ({
   modal = false,
   children,
 }: DialogProps) => {
-  const [internalOpen, setInternalOpen] = React.useState(false);
-  const open = controlledOpen ?? internalOpen;
-
-  const handleOpenChange = (newOpen: boolean) => {
-    setInternalOpen(newOpen);
-    onOpenChange?.(newOpen);
-  };
+  const dialog = useDialog({ open: controlledOpen, onOpenChange, modal });
 
   return (
-    <DialogContext.Provider value={{ open, onOpenChange: handleOpenChange, modal }}>
+    <DialogContext.Provider
+      value={{ open: dialog.open, onOpenChange: dialog.setOpen, modal: dialog.modal }}
+    >
       {children}
     </DialogContext.Provider>
   );
@@ -81,35 +78,10 @@ export interface DialogContentProps {
 const DialogContent = ({ children, className }: DialogContentProps) => {
   const { open, onOpenChange, modal } = useDialogContext();
   const contentRef = React.useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = React.useState(false);
-  const [animationState, setAnimationState] = React.useState<
-    "entering" | "entered" | "exiting"
-  >("entering");
-  const wasOpen = React.useRef(false);
 
-  React.useEffect(() => {
-    if (open) {
-      wasOpen.current = true;
-      setIsVisible(true);
-      setAnimationState("entering");
-      // 다음 프레임에서 entered로 전환하여 애니메이션 트리거
-      const enterTimer = requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setAnimationState("entered");
-        });
-      });
-      return () => cancelAnimationFrame(enterTimer);
-    } else if (wasOpen.current) {
-      setAnimationState("exiting");
-      const exitTimer = setTimeout(() => {
-        setIsVisible(false);
-        setAnimationState("entering");
-        wasOpen.current = false;
-      }, 200);
-      return () => clearTimeout(exitTimer);
-    }
-  }, [open]);
+  const { isVisible, isAnimatingIn } = useDialog({ open, onOpenChange, modal });
 
+  // Web-specific: Escape key + body scroll lock
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !modal) {
@@ -134,8 +106,6 @@ const DialogContent = ({ children, className }: DialogContentProps) => {
   };
 
   if (!isVisible) return null;
-
-  const isAnimatingIn = animationState === "entered";
 
   return (
     <div className="fixed inset-0 z-50">

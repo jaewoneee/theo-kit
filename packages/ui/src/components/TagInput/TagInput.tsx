@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../../utils";
+import { useTagInput } from "theo-kit-core";
 import { X } from "lucide-react";
 import { Badge } from "../Badge";
 
@@ -19,52 +20,36 @@ export interface TagInputProps {
 }
 
 const TagInput = ({
-  value: controlledValue,
-  defaultValue = [],
+  value,
+  defaultValue,
   onChange,
   placeholder = "Enter a tag...",
   disabled,
   error,
   errorMessage,
-  allowDuplicates = false,
+  allowDuplicates,
   maxTags,
   className,
 }: TagInputProps) => {
-  const [internalTags, setInternalTags] =
-    React.useState<string[]>(defaultValue);
+  const { tags, addTag, removeTag } = useTagInput({
+    value,
+    defaultValue,
+    onChange,
+    allowDuplicates,
+    maxTags,
+    disabled,
+  });
+
   const [inputValue, setInputValue] = React.useState("");
   const [isComposing, setIsComposing] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-
-  const tags = controlledValue ?? internalTags;
-
-  const updateTags = (newTags: string[]) => {
-    if (controlledValue === undefined) {
-      setInternalTags(newTags);
-    }
-    onChange?.(newTags);
-  };
-
-  const addTag = (tag: string) => {
-    const trimmedTag = tag.trim();
-    if (!trimmedTag) return;
-    if (!allowDuplicates && tags.includes(trimmedTag)) return;
-    if (maxTags && tags.length >= maxTags) return;
-
-    updateTags([...tags, trimmedTag]);
-    setInputValue("");
-  };
-
-  const removeTag = (index: number) => {
-    if (disabled) return;
-    updateTags(tags.filter((_, i) => i !== index));
-  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       if (isComposing) return;
       addTag(inputValue);
+      setInputValue("");
     } else if (e.key === "Backspace" && !inputValue && tags.length > 0) {
       removeTag(tags.length - 1);
     }

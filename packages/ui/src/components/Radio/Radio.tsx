@@ -1,12 +1,9 @@
 import * as React from "react";
 import { cn } from "../../utils";
+import { useRadioGroup, useToggle } from "theo-kit-core";
+import type { UseRadioGroupReturn } from "theo-kit-core";
 
-interface RadioGroupContextValue {
-  value: string;
-  onValueChange: (value: string) => void;
-  name: string;
-  disabled?: boolean;
-}
+type RadioGroupContextValue = UseRadioGroupReturn & { name: string };
 
 const RadioGroupContext = React.createContext<RadioGroupContextValue | null>(
   null
@@ -27,31 +24,25 @@ export interface RadioGroupProps {
 }
 
 const RadioGroup = ({
-  value: controlledValue,
-  defaultValue = "",
+  value,
+  defaultValue,
   onValueChange,
   name,
   disabled,
   className,
   children,
 }: RadioGroupProps) => {
-  const [internalValue, setInternalValue] = React.useState(defaultValue);
-  const value = controlledValue ?? internalValue;
+  const radioGroup = useRadioGroup({
+    value,
+    defaultValue,
+    onValueChange,
+    disabled,
+  });
   const generatedName = React.useId();
-
-  const handleValueChange = (newValue: string) => {
-    setInternalValue(newValue);
-    onValueChange?.(newValue);
-  };
 
   return (
     <RadioGroupContext.Provider
-      value={{
-        value,
-        onValueChange: handleValueChange,
-        name: name ?? generatedName,
-        disabled,
-      }}
+      value={{ ...radioGroup, name: name ?? generatedName }}
     >
       <div role="radiogroup" className={cn("flex flex-col gap-2", className)}>
         {children}
@@ -86,16 +77,19 @@ const Radio = ({
   onChange,
 }: RadioProps) => {
   const groupContext = useRadioGroupContext();
-  const [internalChecked, setInternalChecked] = React.useState(
-    defaultChecked ?? false
-  );
+  const { checked: standaloneChecked, toggle: standaloneToggle } = useToggle({
+    checked: controlledChecked,
+    defaultChecked,
+    onChange,
+    disabled: itemDisabled,
+  });
 
   const isInGroup = groupContext !== null;
   const disabled = itemDisabled ?? groupContext?.disabled;
 
   const isChecked = isInGroup
-    ? groupContext.value === value
-    : (controlledChecked ?? internalChecked);
+    ? groupContext.isSelected(value)
+    : standaloneChecked;
 
   const handleChange = () => {
     if (disabled) return;
@@ -103,9 +97,7 @@ const Radio = ({
     if (isInGroup) {
       groupContext.onValueChange(value);
     } else {
-      const newChecked = !isChecked;
-      setInternalChecked(newChecked);
-      onChange?.(newChecked);
+      standaloneToggle();
     }
   };
 

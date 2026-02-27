@@ -1,5 +1,7 @@
 import * as React from "react";
 import { cn } from "../../utils";
+import { useAccordion } from "theo-kit-core";
+import type { UseAccordionReturn } from "theo-kit-core";
 import { ChevronDown } from "lucide-react";
 
 export interface AccordionProps {
@@ -11,15 +13,7 @@ export interface AccordionProps {
   className?: string;
 }
 
-interface AccordionContextValue {
-  type: "single" | "multiple";
-  value: string[];
-  onToggle: (itemValue: string) => void;
-}
-
-const AccordionContext = React.createContext<AccordionContextValue | null>(
-  null
-);
+const AccordionContext = React.createContext<UseAccordionReturn | null>(null);
 
 const useAccordionContext = () => {
   const context = React.useContext(AccordionContext);
@@ -30,43 +24,17 @@ const useAccordionContext = () => {
 };
 
 const Accordion = ({
-  type = "single",
-  value: controlledValue,
+  type,
+  value,
   defaultValue,
   onValueChange,
   children,
   className,
 }: AccordionProps) => {
-  const [internalValue, setInternalValue] = React.useState<string[]>(() => {
-    if (defaultValue) {
-      return Array.isArray(defaultValue) ? defaultValue : [defaultValue];
-    }
-    return [];
-  });
-
-  const value = controlledValue
-    ? Array.isArray(controlledValue)
-      ? controlledValue
-      : [controlledValue]
-    : internalValue;
-
-  const onToggle = (itemValue: string) => {
-    let newValue: string[];
-
-    if (type === "single") {
-      newValue = value.includes(itemValue) ? [] : [itemValue];
-    } else {
-      newValue = value.includes(itemValue)
-        ? value.filter((v) => v !== itemValue)
-        : [...value, itemValue];
-    }
-
-    setInternalValue(newValue);
-    onValueChange?.(type === "single" ? (newValue[0] ?? "") : newValue);
-  };
+  const accordion = useAccordion({ type, value, defaultValue, onValueChange });
 
   return (
-    <AccordionContext.Provider value={{ type, value, onToggle }}>
+    <AccordionContext.Provider value={accordion}>
       <div className={cn("divide-y divide-gray-200", className)}>
         {children}
       </div>
@@ -106,11 +74,12 @@ const AccordionItem = ({
   className,
   disabled = false,
 }: AccordionItemProps) => {
-  const { value: openValues } = useAccordionContext();
-  const isOpen = openValues.includes(value);
+  const { isOpen } = useAccordionContext();
 
   return (
-    <AccordionItemContext.Provider value={{ value, isOpen, disabled }}>
+    <AccordionItemContext.Provider
+      value={{ value, isOpen: isOpen(value), disabled }}
+    >
       <div className={cn("", className)}>{children}</div>
     </AccordionItemContext.Provider>
   );
@@ -122,13 +91,13 @@ export interface AccordionTriggerProps {
 }
 
 const AccordionTrigger = ({ children, className }: AccordionTriggerProps) => {
-  const { onToggle } = useAccordionContext();
+  const { toggle } = useAccordionContext();
   const { value, isOpen, disabled } = useAccordionItemContext();
 
   return (
     <button
       type="button"
-      onClick={() => !disabled && onToggle(value)}
+      onClick={() => !disabled && toggle(value)}
       disabled={disabled}
       aria-expanded={isOpen}
       className={cn(

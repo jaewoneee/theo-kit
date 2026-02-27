@@ -1,5 +1,5 @@
-import * as React from "react";
 import { cn } from "../../utils";
+import { useToggle } from "theo-kit-core";
 
 export interface SwitchProps {
   /**
@@ -47,17 +47,12 @@ const Switch = ({
   label,
   labelClassName,
 }: SwitchProps) => {
-  const [internalChecked, setInternalChecked] = React.useState(
-    defaultChecked ?? false
-  );
-  const isChecked = checked ?? internalChecked;
-
-  const handleChange = () => {
-    if (disabled) return;
-    const newChecked = !isChecked;
-    setInternalChecked(newChecked);
-    onChange?.(newChecked);
-  };
+  const { checked: isChecked, toggle } = useToggle({
+    checked,
+    defaultChecked,
+    onChange,
+    disabled,
+  });
 
   const sizeClasses = {
     sm: {
@@ -89,7 +84,7 @@ const Switch = ({
         role="switch"
         aria-checked={isChecked}
         disabled={disabled}
-        onClick={handleChange}
+        onClick={toggle}
         className={cn(
           "relative inline-flex shrink-0 items-center rounded-full transition-colors cursor-pointer",
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",

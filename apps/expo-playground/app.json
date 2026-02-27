@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "expo-playground",
+    "slug": "expo-playground",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "expo-playground",
+    "platforms": ["ios", "android"],
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

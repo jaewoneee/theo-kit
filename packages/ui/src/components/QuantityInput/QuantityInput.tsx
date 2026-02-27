@@ -1,43 +1,18 @@
 import * as React from "react";
 import { cn } from "../../utils";
+import { useQuantityInput } from "theo-kit-core";
 import { Minus, Plus } from "lucide-react";
 
 export interface QuantityInputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "onChange" | "size" | "value" | "defaultValue" | "min" | "max" | "step"
 > {
-  /**
-   * 현재 값
-   */
   value?: number;
-  /**
-   * 기본 값
-   * @default 0
-   */
   defaultValue?: number;
-  /**
-   * 최소 값
-   * @default 0
-   */
   min?: number;
-  /**
-   * 최대 값
-   * @default Infinity
-   */
   max?: number;
-  /**
-   * 증감 단위
-   * @default 1
-   */
   step?: number;
-  /**
-   * 값 변경 핸들러
-   */
   onChange?: (value: number) => void;
-  /**
-   * 크기
-   * @default "md"
-   */
   size?: "sm" | "md" | "lg";
 }
 
@@ -64,10 +39,10 @@ const QuantityInput = React.forwardRef<HTMLInputElement, QuantityInputProps>(
     {
       className,
       value: controlledValue,
-      defaultValue = 0,
-      min = 0,
-      max = Infinity,
-      step = 1,
+      defaultValue,
+      min,
+      max,
+      step,
       onChange,
       size = "md",
       disabled,
@@ -75,38 +50,24 @@ const QuantityInput = React.forwardRef<HTMLInputElement, QuantityInputProps>(
     },
     ref
   ) => {
-    const [internalValue, setInternalValue] = React.useState(defaultValue);
-    const isControlled = controlledValue !== undefined;
-    const value = isControlled ? controlledValue : internalValue;
-
-    const updateValue = React.useCallback(
-      (newValue: number) => {
-        const clampedValue = Math.min(Math.max(newValue, min), max);
-        if (!isControlled) {
-          setInternalValue(clampedValue);
-        }
-        onChange?.(clampedValue);
-      },
-      [isControlled, min, max, onChange]
-    );
-
-    const increment = () => {
-      updateValue(value + step);
-    };
-
-    const decrement = () => {
-      updateValue(value - step);
-    };
+    const quantity = useQuantityInput({
+      value: controlledValue,
+      defaultValue,
+      min,
+      max,
+      step,
+      onChange,
+    });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = parseInt(e.target.value, 10);
       if (!isNaN(newValue)) {
-        updateValue(newValue);
+        quantity.setValue(newValue);
       }
     };
 
     const handleBlur = () => {
-      updateValue(value);
+      quantity.setValue(quantity.value);
     };
 
     const sizes = sizeClasses[size];
@@ -115,8 +76,8 @@ const QuantityInput = React.forwardRef<HTMLInputElement, QuantityInputProps>(
       <div className={cn("inline-flex items-center", className)}>
         <button
           type="button"
-          onClick={decrement}
-          disabled={disabled || value <= min}
+          onClick={quantity.decrement}
+          disabled={disabled || quantity.isAtMin}
           className={cn(
             "flex items-center cursor-pointer justify-center rounded-l border  border-gray-300",
             "bg-gray-50 text-gray-600 transition-colors",
@@ -133,7 +94,7 @@ const QuantityInput = React.forwardRef<HTMLInputElement, QuantityInputProps>(
           ref={ref}
           type="text"
           inputMode="numeric"
-          value={value}
+          value={quantity.value}
           onChange={handleInputChange}
           onBlur={handleBlur}
           disabled={disabled}
@@ -147,8 +108,8 @@ const QuantityInput = React.forwardRef<HTMLInputElement, QuantityInputProps>(
         />
         <button
           type="button"
-          onClick={increment}
-          disabled={disabled || value >= max}
+          onClick={quantity.increment}
+          disabled={disabled || quantity.isAtMax}
           className={cn(
             "flex items-center justify-center cursor-pointer rounded-r border  border-gray-300",
             "bg-gray-50 text-gray-600 transition-colors",
