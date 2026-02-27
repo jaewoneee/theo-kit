@@ -4,7 +4,6 @@ import { cn } from "../../utils/cn";
 import { useAccordion } from "theo-kit-core";
 import type { UseAccordionReturn } from "theo-kit-core";
 
-// Android에서 LayoutAnimation 사용을 위해 필요
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
@@ -101,7 +100,9 @@ const AccordionTrigger = ({ children, className }: AccordionTriggerProps) => {
 
   const handlePress = () => {
     if (disabled) return;
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    if (Platform.OS !== "web") {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    }
     toggle(value);
   };
 

@@ -1,4 +1,4 @@
-import { Pressable, View, Text, Animated } from "react-native";
+import { Pressable, View, Text, Animated, Platform } from "react-native";
 import { useRef, useEffect } from "react";
 import { cn } from "../../utils/cn";
 import { useToggle } from "theo-kit-core";
@@ -44,7 +44,7 @@ const Switch = ({
     Animated.timing(translateAnim, {
       toValue: isChecked ? config.translate : 2,
       duration: 200,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   }, [isChecked, config.translate, translateAnim]);
 
