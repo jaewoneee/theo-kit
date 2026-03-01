@@ -1,6 +1,6 @@
 {
   "name": "theo-kit-core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Platform-agnostic headless hooks and utilities for theo-kit",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vercel --version)",
+      "Bash(npx vercel deploy --yes --prod 2)",
+      "Bash(npx vercel login)",
+      "Bash(npx vercel deploy --yes --prod)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\User\\Desktop\\project\\theo-kit\\apps\\docs\\.vercel"
+    ]
+  }
+}
