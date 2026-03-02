@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm --filter docs build-storybook",
+  "buildCommand": "pnpm --filter theo-kit-core build && pnpm --filter theo-kit build && pnpm --filter docs build-storybook",
   "outputDirectory": "apps/docs/storybook-static",
   "installCommand": "pnpm install",
   "framework": null
